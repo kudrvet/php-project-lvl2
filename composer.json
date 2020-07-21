@@ -1,0 +1,12 @@
+{
+    "name": "vitaliy/php-project-lvl2",
+    "type": "library",
+    "license": "MIT",
+    "description": "php-package-lv2",
+    "bin": [
+    "bin/gendiff"
+  ],
+    "require": {
+        "docopt/docopt": "^1.0"
+    }
+}
