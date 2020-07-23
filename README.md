@@ -19,15 +19,15 @@ The gendiff is cli utilite. It show differ bettween two files.
  
 Usage:
 
-  gendiff (-h|--help)
-  gendiff (-v|--version)
-  gendiff [--format <fmt>] <firstFile> <secondFile>
+   gendiff (-h|--help)  
+   gendiff (-v|--version)  
+   gendiff [--format <fmt>] <firstFile> <secondFile>
 
 Options:
 
-  -h --help                     Show this screen
-  -v --version                  Show version
-  --format <fmt>                Report format [default: pretty]
+  -h --help                     Show this screen  
+  -v --version                  Show version  
+  --format <fmt>                Report format [default: pretty]  
   
   ## Examples
   
