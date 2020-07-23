@@ -1,5 +1,5 @@
 # php-project-lvl2
-
+<a href="https://codeclimate.com/github/kudrvet/php-project-lvl2/maintainability"><img src="https://api.codeclimate.com/v1/badges/699710253060f1868b7f/maintainability" /></a> <a href="https://codeclimate.com/github/kudrvet/php-project-lvl2/test_coverage"><img src="https://api.codeclimate.com/v1/badges/699710253060f1868b7f/test_coverage" /></a>
 ## Setup
 via Composer:
 1. global installation to use CLI - utilite.
