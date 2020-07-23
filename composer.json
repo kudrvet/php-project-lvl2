@@ -4,9 +4,14 @@
     "license": "MIT",
     "description": "php-package-lv2",
     "bin": [
-    "bin/gendiff"
-  ],
+      "bin/gendiff"
+    ],
+    "autoload": {
+    "files": [
+      "src/Differ.php"
+     ]
+    },
     "require": {
-        "docopt/docopt": "^1.0"
+      "docopt/docopt": "^1.0"
     }
 }
