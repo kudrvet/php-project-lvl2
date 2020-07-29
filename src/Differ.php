@@ -17,21 +17,21 @@ function genDiff($path1, $path2)
         if (isset($beforeAsoc[$key])) {
             // not changed
             if ($beforeAsoc[$key] == $value) {
-                $result = $result . "{$key} :{$value} \n";
+                $result = $result . "{$key}: {$value}\n";
                 // changed
             } elseif ($beforeAsoc[$key] !== $value) {
-                $result .= "+ {$key}: {$value} \n";
-                $result .= "- {$key}: {$beforeAsoc[$key]} \n";
+                $result .= "+ {$key}: {$value}\n";
+                $result .= "- {$key}: {$beforeAsoc[$key]}\n";
             }
             //add
         } else {
-            $result .= "+ {$key}: {$value} \n";
+            $result .= "+ {$key}: {$value}\n";
         }
     }
         //deleted
     $deleted = array_diff_key($beforeAsoc, $afterAsoc);
     foreach ($deleted as $key => $value) {
-        $result .= "- {$key}: {$value} \n";
+        $result .= "- {$key}: {$value}\n";
     }
         return "{\n$result}" ;
 }
