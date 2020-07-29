@@ -15,8 +15,10 @@ jobs:
         with:
           # Specify the PHP version
           php-version: '7.4'
-          tools: phpcs
+          tools: phpcs, phpunit
         
       - name: run linter
         run: make lint
+      - name: run tests
+        run: make test
 
