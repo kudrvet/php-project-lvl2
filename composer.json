@@ -5,7 +5,7 @@
     "description": "php-package-lv2",
     "scripts" : {
       "phpcs":"phpcs",
-      "phpunit": "phpunit"
+      "test": "phpunit tests"
     },
     "bin": [
       "bin/gendiff"
