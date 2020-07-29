@@ -21,6 +21,13 @@ jobs:
         run: make lint
       - name: install package
         run: make install
-      - name: run tests
-        run: make test
+      - name: run test & publish code coverage
+        uses: paambaati/codeclimate-action@v2.6.0
+        # Add Code Climate secret key
+        env:
+          CC_TEST_REPORTER_ID: e634f6db5a948f514061b94542ab8650df572314a82b7b09ed61a26775b9a74d
+        with:
+          coverageCommand: make test-coverage
+          coverageLocations: ${{github.workplace}}/build/logs/clover.xml:clover
+          debug: true
 
