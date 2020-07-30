@@ -2,6 +2,9 @@
 
 namespace Differ\Differ;
 
+use function PhpTrees\Trees\getChildren;
+use function PhpTrees\Trees\isDirectory;
+
 function genDiff($path1, $path2)
 {
     $file1Content = file_get_contents($path1, true);
@@ -34,6 +37,11 @@ function genDiff($path1, $path2)
         $result .= "- {$key}: {$value}\n";
     }
         return "{\n$result}" ;
+}
+
+function add ($first, $second )
+{
+    return $first + $second;
 }
 
 //print_r(genDiff('./before.json','/Users/vitaliy/testFolder/php-project-lvl2/bin/after.json'));
