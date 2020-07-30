@@ -4,12 +4,10 @@ on:
     branches: [ master ]
  
 jobs:
-  make-lint:
+  build:
     runs-on: ubuntu-latest
-    name: Make lint
     steps:
       - uses: actions/checkout@v2
-        
       - name: Setup PHP 
         uses: shivammathur/setup-php@v2
         with:
