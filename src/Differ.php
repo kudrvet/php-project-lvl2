@@ -38,10 +38,3 @@ function genDiff($path1, $path2)
     }
         return "{\n$result}" ;
 }
-
-function add($first, $second)
-{
-    return $first + $second;
-}
-
-//print_r(genDiff('./before.json','/Users/vitaliy/testFolder/php-project-lvl2/bin/after.json'));
