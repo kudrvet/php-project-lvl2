@@ -16,10 +16,10 @@ jobs:
           # Specify the PHP version
           php-version: '7.4'
         
-      - name: run linter
-        run: make lint
       - name: install package
         run: make install
+      - name: run linter
+        run: make lint
       - name: run test & publish code coverage
         uses: paambaati/codeclimate-action@v2.6.0
         # Add Code Climate secret key
