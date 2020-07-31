@@ -3,4 +3,6 @@
 .idea/
 jsons/
 /build
+coverage/
+test-reporter
 
