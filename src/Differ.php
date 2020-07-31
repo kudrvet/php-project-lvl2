@@ -2,15 +2,27 @@
 
 namespace Differ\Differ;
 
-use function PhpTrees\Trees\getChildren;
-use function PhpTrees\Trees\isDirectory;
+use function Differ\Parsers\YamlParser\toAsoc;
+use function  Differ\Parsers\JsonParser\toAsoc as jsonToAsoc;
 
 function genDiff($path1, $path2)
 {
-    $file1Content = file_get_contents($path1, true);
-    $file2Content = file_get_contents($path2, true);
-    $beforeAsoc = json_decode($file1Content, true);
-    $afterAsoc = json_decode($file2Content, true);
+    $fileBefore = file_get_contents($path1, true);
+    $fileAfter = file_get_contents($path2, true);
+
+    $ext = pathinfo($path1, PATHINFO_EXTENSION);
+
+    switch ($ext) {
+        case "yaml":
+            $beforeAsoc = toAsoc($fileBefore);
+            $afterAsoc = toAsoc($fileAfter);
+            break;
+        case "json":
+            $beforeAsoc = jsonToAsoc($fileBefore);
+            $afterAsoc =  jsonToAsoc($fileAfter);
+            break;
+    }
+
     $result = "";
     foreach ($afterAsoc as $key => $value) {
         if (is_bool($value)) {

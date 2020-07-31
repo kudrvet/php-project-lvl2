@@ -12,11 +12,14 @@
     ],
     "autoload": {
     "files": [
-      "src/Differ.php"
+      "src/Differ.php",
+      "src/Parsers/JsonParser.php",
+      "src/Parsers/YamlParser.php"
      ]
     },
     "require": {
-      "docopt/docopt": "^1.0"
+      "docopt/docopt": "^1.0",
+        "symfony/yaml": "^5.1"
     },
   "require-dev": {
     "squizlabs/php_codesniffer": "3.*",

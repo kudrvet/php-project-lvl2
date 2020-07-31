@@ -15,16 +15,28 @@ use function Differ\Differ\genDiff;
 
 class DifferTest extends TestCase
 {
-    public function testGenDiffWithEqualsStrings()
+    public function testGenDiffWithEqualsJsonStrings()
     {
-        $diff = $diff = genDiff('./tests/fixtures/before1.json','./tests/fixtures/after1.json');
+        $diff = $diff = genDiff('./tests/fixtures/jsonBefore1.json','./tests/fixtures/jsonAfter1.json');
         $this->assertEquals(file_get_contents('./tests/fixtures/trueResult1'),  $diff);
 
     }
-    public function testGenDiff()
+    public function testGenDiffWithJson()
     {
-        $diff = genDiff('./tests/fixtures/before.json','./tests/fixtures/after.json');
-        $this->assertEquals(file_get_contents('./tests/fixtures/trueResult'),  $diff);
+        $diff = genDiff('./tests/fixtures/jsonBefore2.json','./tests/fixtures/jsonAfter2.json');
+        $this->assertEquals(file_get_contents('./tests/fixtures/trueResult2'),  $diff);
+    }
+
+    public function testGenDiffWithEqualsYamlStrings()
+    {
+        $diff = $diff = genDiff('./tests/fixtures/ymlBefore1.yaml', './tests/fixtures/ymlAfter1.yaml');
+        $this->assertEquals(file_get_contents('./tests/fixtures/trueResult1'), $diff);
+
+    }
+    public function testGenDiffWithYaml()
+    {
+        $diff = genDiff('./tests/fixtures/ymlBefore2.yaml','./tests/fixtures/ymlAfter2.yaml');
+        $this->assertEquals(file_get_contents('./tests/fixtures/trueResult2'),  $diff);
     }
 }
 
