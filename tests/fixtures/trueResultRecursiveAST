@@ -1,0 +1,18 @@
+[
+['key' => 'common', 'status' => 'nested',
+children => [
+                ['key' => setting1, 'value' => Value 1, 'status' => 'unchanged'],
+                ['key' => setting2, 'value => 200', 'status => deleted'],
+                ['key' => setting3, 'value => true', 'status' => unchanged],
+                ['key' => setting6, 'status' => 'deleted', 'value' => ['key' => 'value']]
+            ]
+],
+['key' => 'group1', 'status' => 'nested',
+children => [
+                ['key' => 'baz', 'oldValue' => bas, 'newValue' => bars, 'status' => 'changed'],
+                ['key' => 'foo', 'value' => bar, 'status' => 'unchanged']
+            ]
+],
+['key' => 'group2', 'status' => 'deleted', 'value' => ['abc' => 12345]],
+['key' => group3, 'status' => 'added', 'value' => ['fee' => 100500]]
+]

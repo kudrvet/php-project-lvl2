@@ -5,4 +5,5 @@ jsons/
 /build
 coverage/
 test-reporter
+debug.php
 
