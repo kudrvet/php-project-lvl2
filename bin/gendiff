@@ -30,7 +30,7 @@ $args = Docopt::handle($doc, array('version'=>'gendiff beta'));
 
 $firstFile = $args->args['<firstFile>'];
 $secondFile = $args->args['<secondFile>'];
-
-$diff = genDiff($firstFile, $secondFile);
+$format = $args->args['--format'];
+$diff = genDiff($firstFile, $secondFile, $format);
 print_r($diff);
 
