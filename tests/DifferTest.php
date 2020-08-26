@@ -46,6 +46,13 @@ class DifferTest extends TestCase
         $this->assertEquals($expected,$diff);
     }
 
+    public function testGenDiffPlainFormatWithJson()
+    {
+        $diff =  $diff = genDiff('./tests/fixtures/recursiveJsonBefore.json',
+            './tests/fixtures/recursiveJsonAfter.json','plain');
+        $expected = file_get_contents('./tests/fixtures/formatPlainResult');
+        $this->assertEquals($expected,$diff);
+    }
 }
 
 
