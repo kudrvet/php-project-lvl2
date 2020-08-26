@@ -13,7 +13,7 @@ via Composer:
  ```
 ## Description
 
-The gendiff is cli utilite. It show differ bettween two files.
+The gendiff is cli utilite. It show differ bettween two files.Json and Yaml format supported.
 
  ## Usage
  
@@ -31,6 +31,6 @@ Options:
   
   ## Examples
   
-  [![asciicast](https://asciinema.org/a/7j0n8OcZsSfP3GIcHuVNyhgFe.svg)](https://asciinema.org/a/7j0n8OcZsSfP3GIcHuVNyhgFe)
+[![asciicast](https://asciinema.org/a/h0Nuqcixju6naJnMTda4J4KkT.svg)](https://asciinema.org/a/h0Nuqcixju6naJnMTda4J4KkT)
   
   
