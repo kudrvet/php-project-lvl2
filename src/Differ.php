@@ -42,7 +42,8 @@ function genDiff($path1, $path2, $format = 'pretty')
             return toPrettyFormat($ast);
         case 'plain':
             return toPlainFormat($ast);
-        default: echo "choose existing formatter!";
+        default:
+            echo "choose existing formatter!";
     }
 }
 
