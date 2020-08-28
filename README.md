@@ -13,8 +13,9 @@ via Composer:
  ```
 ## Description
 
-The gendiff is cli utilite. It show differ bettween two files(Json and Yaml format supported).
-The differ can be shown in different formats.Support [ -- pretty(by default)], [-- plain] and [--json] output formatters.
+The gendiff is cli utilite. It show differ bettween two files (Json and Yaml format supported).  
+The differ can be shown in different formats.  
+Support [ -- pretty(by default)], [-- plain] and [--json] output formatters.
 
  ## Usage
  
