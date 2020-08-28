@@ -13,7 +13,8 @@ via Composer:
  ```
 ## Description
 
-The gendiff is cli utilite. It show differ bettween two files.Json and Yaml format supported.
+The gendiff is cli utilite. It show differ bettween two files(Json and Yaml format supported).
+The differ can be shown in different formats.Support [ -- pretty(by default)], [-- plain] and [--json] output formatters.
 
  ## Usage
  
@@ -31,6 +32,10 @@ Options:
   
   ## Examples
   
+### Pretty and plain formatters
 [![asciicast](https://asciinema.org/a/h0Nuqcixju6naJnMTda4J4KkT.svg)](https://asciinema.org/a/h0Nuqcixju6naJnMTda4J4KkT)
+
+### Json formatter
+[![asciicast](https://asciinema.org/a/meTCbdwrdUrcBE8iAx4LDOtQt.svg)](https://asciinema.org/a/meTCbdwrdUrcBE8iAx4LDOtQt)
   
   
