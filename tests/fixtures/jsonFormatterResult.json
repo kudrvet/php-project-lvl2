@@ -1,0 +1,48 @@
+{
+  "common.follow": {
+    "status": "added",
+    "value": false
+  },
+  "common.setting3": {
+    "status": "changed",
+    "from": true,
+    "to": "[complex value]"
+  },
+  "common.setting4": {
+    "status": "added",
+    "value": "blah blah"
+  },
+  "common.setting5": {
+    "status": "added",
+    "value": "[complex value]"
+  },
+  "common.setting6.ops": {
+    "status": "added",
+    "value": "vops"
+  },
+  "common.setting6.doge.wow": {
+    "status": "changed",
+    "from": "too much",
+    "to": "so much"
+  },
+  "common.setting2": {
+    "status": "removed"
+  },
+  "group1.baz": {
+    "status": "changed",
+    "from": "bas",
+    "to": "bars"
+  },
+  "group1.nest": {
+    "status": "changed",
+    "from": "[complex value]",
+    "to": "str"
+  },
+  "group3": {
+    "status": "added",
+    "value": "[complex value]"
+  },
+  "group2": {
+    "status": "removed"
+  }
+}
