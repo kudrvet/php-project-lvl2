@@ -2,6 +2,7 @@
 
 namespace Differ\Differ;
 
+use function Differ\Formatters\JsonFormatter\toJsonFormat;
 use function Differ\Formatters\PrettyFormatter\toPrettyFormat;
 use function Differ\Formatters\PlainFormatter\toPlainFormat;
 use function Differ\Parsers\YamlParser\toAsoc;
@@ -42,6 +43,8 @@ function genDiff($path1, $path2, $format = 'pretty')
             return toPrettyFormat($ast);
         case 'plain':
             return toPlainFormat($ast);
+        case 'json':
+            return toJsonFormat($ast);
         default:
             echo "choose existing formatter!";
     }

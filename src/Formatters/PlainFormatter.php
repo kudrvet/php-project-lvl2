@@ -2,10 +2,11 @@
 
 namespace Differ\Formatters\PlainFormatter;
 
-use function Differ\Differ\boolToString;
-use function PHPUnit\Framework\isEmpty;
-
-function toPlainFormat($ast, $keysAncestors = "")
+function toPlainFormat($ast)
+{
+    return rtrim(toPlain($ast, ""));
+}
+function toPlain($ast, $keysAncestors)
 {
 
     return   array_reduce($ast, function ($output, $item) use ($keysAncestors) {
@@ -13,7 +14,7 @@ function toPlainFormat($ast, $keysAncestors = "")
         if ($status == 'nested') {
             $children = $item['children'];
             $keysAncestors .= empty($keysAncestors) ? "{$item['key']}" : ".{$item['key']}";
-            $output .= toPlainFormat($children, $keysAncestors);
+            $output .= toPlain($children, $keysAncestors);
             return $output;
         } else {
             $output .= printProperty($item, $keysAncestors);
@@ -21,7 +22,6 @@ function toPlainFormat($ast, $keysAncestors = "")
         }
     }, "");
 }
-
 
 function printProperty($item, $keysAncestors)
 {

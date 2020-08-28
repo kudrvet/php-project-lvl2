@@ -8,6 +8,7 @@ function toPrettyFormat($diffAST)
 {
     return "{\n" . mainFormatting($diffAST, $deep = 0) . "}";
 }
+
 function mainFormatting($diffAST, $deep)
 {
     $formatMap = ['added' => '+ ','deleted' => '- ','unchanged' => '  '];

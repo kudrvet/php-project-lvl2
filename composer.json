@@ -16,7 +16,8 @@
       "src/Parsers/JsonParser.php",
       "src/Parsers/YamlParser.php",
       "src/Formatters/PlainFormatter.php",
-      "src/Formatters/PrettyFormatter.php"
+      "src/Formatters/PrettyFormatter.php",
+      "src/Formatters/JsonFormatter.php"
     ]
     },
     "require": {
