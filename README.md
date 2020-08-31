@@ -5,11 +5,11 @@ via Composer:
 1. global installation to use CLI - utilite.
 
 ```sh
- composer global require vitaliy/php-project-lvl1
+ composer global require vitaliy/php-project-lvl2
  ```
  2. local installation to use as library.
  ```sh
- composer require vitaliy/php-project-lvl1
+ composer require vitaliy/php-project-lvl2
  ```
 ## Description
 
