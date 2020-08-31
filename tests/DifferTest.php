@@ -15,51 +15,64 @@ use function Differ\Differ\genDiff;
 
 class DifferTest extends TestCase
 {
-
-    public function testGenDiffWithJson()
+    public function testGenDiffWithFlatJsonAndPrettyFormatter()
     {
-
-        $diff = genDiff('./tests/fixtures/jsonBefore2.json','./tests/fixtures/jsonAfter2.json');
-        $this->assertEquals(file_get_contents('./tests/fixtures/trueResult2'),  $diff);
-
+        $diff = genDiff('./tests/fixtures/flatJsonBefore.json','./tests/fixtures/flatJsonAfter.json');
+        $this->assertEquals(file_get_contents('./tests/fixtures/flatInputWithPrettyFormatterResult'),  $diff);
     }
 
-    public function testGenDiffWithYaml()
+    public function testGenDiffWithFlatYamlAndPrettyFormatter()
     {
-        $diff = genDiff('./tests/fixtures/ymlBefore2.yaml','./tests/fixtures/ymlAfter2.yaml');
-        $this->assertEquals(file_get_contents('./tests/fixtures/trueResult2'),  $diff);
+        $diff = genDiff('./tests/fixtures/flatYmlBefore.yaml','./tests/fixtures/flatYmlAfter.yaml');
+        $this->assertEquals(file_get_contents('./tests/fixtures/flatInputWithPrettyFormatterResult'),  $diff);
     }
 
-      public function testGenDiffWithRecursiveJson ()
-      {
-          $diff = genDiff('./tests/fixtures/recursiveJsonBefore.json',
-              './tests/fixtures/recursiveJsonAfter.json');
-          $expected = file_get_contents('./tests/fixtures/trueResultRecursive');
-          $this->assertEquals($expected,$diff);
-      }
+    public function testGenDiffWithFlatJsonAndPlainFormatter()
+    {
+        $diff = genDiff('./tests/fixtures/flatJsonBefore.json','./tests/fixtures/flatJsonAfter.json','plain');
+        $this->assertEquals(file_get_contents('./tests/fixtures/flatInputWithPlainFormatterResult'),  $diff);
+    }
 
-    public function testGenDiffWithRecursiveYml ()
+    public function testGenDiffWithFlatYamlAndPlainFormatter()
+    {
+        $diff = genDiff('./tests/fixtures/flatYmlBefore.yaml','./tests/fixtures/flatYmlAfter.yaml','plain');
+        $this->assertEquals(file_get_contents('./tests/fixtures/flatInputWithPlainFormatterResult'),  $diff);
+    }
+
+    public function testGenDiffWithFlatJsonAndJsonFormatter()
+    {
+        $diff = genDiff('./tests/fixtures/flatJsonBefore.json','./tests/fixtures/flatJsonAfter.json','json');
+        $this->assertEquals(file_get_contents('./tests/fixtures/flatInputWithJsonFormatterResult'),  $diff);
+    }
+
+    public function testGenDiffWithFlatYamlAndJsonFormatter()
+    {
+        $diff = genDiff('./tests/fixtures/flatYmlBefore.yaml','./tests/fixtures/flatYmlAfter.yaml','json');
+        $this->assertEquals(file_get_contents('./tests/fixtures/flatInputWithJsonFormatterResult'),  $diff);
+    }
+
+    public function testGenDiffWithRecursiveYmlAndPrettyFormatter()
     {
         $diff = genDiff('./tests/fixtures/recursiveYmlBefore.yaml',
             './tests/fixtures/recursiveYmlAfter.yaml');
-        $expected = file_get_contents('./tests/fixtures/trueResultRecursiveYml');
-        $this->assertEquals($expected,$diff);
+        $expected = file_get_contents('./tests/fixtures/recursiveInputWithPrettyFormatterResult');
+        $this->assertEquals($expected, $diff);
     }
 
-    public function testGenDiffPlainFormatWithRecursiveJson()
+    public function testGenDiffRecursiveJsonWithPlainFormatter()
     {
         $diff =  $diff = genDiff('./tests/fixtures/recursiveJsonBefore.json',
             './tests/fixtures/recursiveJsonAfter.json','plain');
-        $expected = file_get_contents('./tests/fixtures/plainFormatterResult');
-        $this->assertEquals($expected,$diff);
+        $expected = file_get_contents('./tests/fixtures/recursiveInputWithPlainFormatterResult');
+        $this->assertEquals($expected, $diff);
     }
 
-    public function testGenDiffJsonFormatWithRecursiveJson()
+    public function testGenDiffRecursiveJsonWithJsonFormatter()
     {
         $diff =  $diff = genDiff('./tests/fixtures/recursiveJsonBefore.json',
             './tests/fixtures/recursiveJsonAfter.json','json');
-        $expected = file_get_contents('./tests/fixtures/jsonFormatterResult.json');
-        $this->assertEquals($expected,$diff);
+        $expected = file_get_contents('./tests/fixtures/recursiveInputWithJsonFormatterResult.json');
+        $this->assertEquals($expected, $diff);
     }
 }
 

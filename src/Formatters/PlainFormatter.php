@@ -56,5 +56,6 @@ function printProperty($item, $keysAncestors)
 
 function wrappingStrToQuotes($str)
 {
-    return ($str !== 'true' && $str !== 'false' && $str !== '[complex value]') ? "'" . $str . "'" : $str;
+    return ($str !== 'true' && $str !== 'false'
+        && $str !== '[complex value]' && !is_numeric($str)) ? "'" . $str . "'" : $str;
 }

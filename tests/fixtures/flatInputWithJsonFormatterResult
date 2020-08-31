@@ -1,0 +1,14 @@
+{
+  "timeout": {
+    "status": "changed",
+    "from": 50,
+    "to": 20
+  },
+  "verbose": {
+    "status": "added",
+    "value": true
+  },
+  "proxy": {
+    "status": "removed"
+  }
+}

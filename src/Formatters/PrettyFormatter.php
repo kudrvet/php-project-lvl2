@@ -12,15 +12,15 @@ function toPrettyFormat($diffAST)
 function mainFormatting($diffAST, $deep)
 {
     $formatMap = ['added' => '+ ','deleted' => '- ','unchanged' => '  '];
-    $res = "";
-    foreach ($diffAST as $key => $value) {
+
+    $formatted =  array_map(function ($key) use ($diffAST, $formatMap, $deep) {
         $status = $diffAST[$key]['status'];
         $keyIn = $diffAST[$key]['key'];
         $tab = str_repeat("    ", $deep);
-        $res .= $tab;
+        $res = $tab;
         if ($status == 'nested') {
             $children = $diffAST[$key]['children'];
-            $res = $res . "    " . $keyIn . ": {\n"
+            return  $res . "    " . $keyIn . ": {\n"
                 . mainFormatting($children, $deep + 1)
                 . str_repeat("    ", $deep + 1) . "}\n";
         } else {
@@ -53,11 +53,11 @@ function mainFormatting($diffAST, $deep)
                 }
             }
         }
-    }
+        return $res;
+    }, array_keys($diffAST));
 
-    return $res;
+    return implode("", $formatted);
 }
-
 function formatArray($array, $deep)
 {
     $stripedStr = strip(json_encode($array, JSON_PRETTY_PRINT), "\"", ",");

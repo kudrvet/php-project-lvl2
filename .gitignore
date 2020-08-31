@@ -6,4 +6,5 @@ jsons/
 coverage/
 test-reporter
 debug.php
+/tests/fixtures/expectedAST
 
