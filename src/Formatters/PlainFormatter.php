@@ -2,60 +2,57 @@
 
 namespace Differ\Formatters\PlainFormatter;
 
-function toPlainFormat($ast)
+function toPlainFormat($diffTree)
 {
-    return rtrim(toPlain($ast, ""));
+    return rtrim(toPlain($diffTree, ""));
 }
-function toPlain($ast, $keysAncestors)
+function toPlain($diffTree, $keysAncestors)
 {
-
-    return   array_reduce($ast, function ($output, $item) use ($keysAncestors) {
+    $formatted =  array_map(function ($item) use ($keysAncestors) {
         $status = $item['status'];
         if ($status == 'nested') {
             $children = $item['children'];
             $keysAncestors .= empty($keysAncestors) ? "{$item['key']}" : ".{$item['key']}";
-            $output .= toPlain($children, $keysAncestors);
-            return $output;
-        } else {
-            $output .= printProperty($item, $keysAncestors);
-            return  $output;
+            return toPlain($children, $keysAncestors);
         }
-    }, "");
-}
 
-function printProperty($item, $keysAncestors)
-{
-    $status = $item['status'];
-    $key = $item['key'];
-    $fullKeysPath = empty($keysAncestors) ? $key : $keysAncestors . "." . $key;
-    if ($status == 'unchanged') {
-        return  "";
-    }
-    if ($status == 'changed') {
-        $oldValue = is_array($item['oldValue']) ? '[complex value]' : $item['oldValue'];
-        $newValue = is_array($item['newValue']) ? '[complex value]' : $item['newValue'];
+        $key = $item['key'];
+        $fullKeysPath = empty($keysAncestors) ? $key : $keysAncestors . "." . $key;
+        if ($status == 'unchanged') {
+            return "";
+        }
+        if ($status == 'changed') {
 
-        $oldValue = wrappingStrToQuotes($oldValue);
-        $newValue = wrappingStrToQuotes($newValue);
+            $oldValue = processArrayValueAndWrappring($item['oldValue']);
+            $newValue = processArrayValueAndWrappring($item['newValue']);
 
-        $res =  "Property '$fullKeysPath' was updated. From $oldValue to $newValue\n";
-    } else {
-        $value = $item['value'];
+            return "Property '$fullKeysPath' was updated. From $oldValue to $newValue\n";
+        }
+
         if ($status == 'deleted') {
-            $res = "Property '$fullKeysPath' was removed\n";
+            return "Property '$fullKeysPath' was removed\n";
         }
 
         if ($status == 'added') {
-            $value = is_array($value) ? '[complex value]' : $value;
-            $value = wrappingStrToQuotes($value);
-            $res = "Property '$fullKeysPath' was added with value: {$value}\n";
+            $value = processArrayValueAndWrappring($item['value']);
+            return  "Property '$fullKeysPath' was added with value: {$value}\n";
         }
-    }
-    return  $res;
+
+        return "";
+
+    }, $diffTree);
+
+    return implode("", $formatted);
 }
 
 function wrappingStrToQuotes($str)
 {
     return ($str !== 'true' && $str !== 'false'
         && $str !== '[complex value]' && !is_numeric($str)) ? "'" . $str . "'" : $str;
+}
+
+function processArrayValueAndWrappring($value)
+{
+    $temp = is_array($value) ? '[complex value]' : $value;
+    return wrappingStrToQuotes($temp);
 }

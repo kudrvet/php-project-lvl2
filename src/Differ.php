@@ -8,81 +8,99 @@ use function Differ\Formatters\PlainFormatter\toPlainFormat;
 use function Differ\Parsers\YamlParser\toAsoc;
 use function Differ\Parsers\JsonParser\toAsoc as jsonToAsoc;
 
-function genDiff($path1, $path2, $format = 'pretty')
+function buildDiffTree($conten1,$content2,$contentFormat)
 {
-    $fileBefore = file_get_contents($path1, true);
-    $fileAfter = file_get_contents($path2, true);
-
-    $ext = pathinfo($path1, PATHINFO_EXTENSION);
-
-    switch ($ext) {
+    switch ($contentFormat) {
         case "yaml":
-            $beforeAsoc = toAsoc($fileBefore);
-            $afterAsoc = toAsoc($fileAfter);
+            $beforeData = toAsoc($conten1);
+            $afterData = toAsoc($content2);
             break;
         case "json":
-            $beforeAsoc = jsonToAsoc($fileBefore);
-            $afterAsoc = jsonToAsoc($fileAfter);
+            $beforeData = jsonToAsoc($conten1);
+            $afterData = jsonToAsoc($content2);
             break;
+        default:
+            throw new \Exception("Format {$contentFormat} is not supported! ");
     }
 
-    $ast = getDiffAST($beforeAsoc, $afterAsoc);
+    return getDiffTree($beforeData, $afterData);
+}
 
+function buildFormattedDiff($diffTree,$format)
+{
     switch ($format) {
         case 'pretty':
-            return toPrettyFormat($ast);
+            return toPrettyFormat($diffTree);
         case 'plain':
-            return toPlainFormat($ast);
+            return toPlainFormat($diffTree);
         case 'json':
-            return toJsonFormat($ast);
+            return toJsonFormat($diffTree);
         default:
-            echo "choose existing formatter!";
+            throw new \Exception("Output format {$format} is not supported!");
     }
 }
 
-function getDiffAST(array $beforeAsoc, array $afterAsoc)
+function genDiff($path1, $path2, $format = 'pretty')
 {
-    $beforeAsoc = array_map(function ($item) {
-        return boolToString($item);
-    }, $beforeAsoc);
+    $contentBefore= file_get_contents($path1, true);
+    $contentAfter = file_get_contents($path2, true);
 
-    $afterAsoc = array_map(function ($item) {
-        return boolToString($item);
-    }, $afterAsoc);
+    $fileBeforeFormat = pathinfo($path1, PATHINFO_EXTENSION);
+    $fileAfterFormat= pathinfo($path2, PATHINFO_EXTENSION);
 
-    $diff = array_map(function ($key) use ($afterAsoc, $beforeAsoc) {
-        $value = $afterAsoc[$key];
-        if (isset($beforeAsoc[$key])) {
-            // not changed
-            if ($beforeAsoc[$key] === $value) {
-                return ['key' => $key, 'value' => $value, 'status' => 'unchanged'];
-                // changed
-            } elseif ($beforeAsoc[$key] !== $value) {
-                if (is_array($beforeAsoc[$key]) && is_array($afterAsoc[$key])) {
-                    $childrenBefore = $beforeAsoc[$key];
-                    $childrenAfter = $afterAsoc[$key];
-                    return ['key' => $key, 'status' => 'nested',
-                        'children' => getDiffAST($childrenBefore, $childrenAfter)];
-                } else {
-                    return ['key' => $key, 'oldValue' => $beforeAsoc[$key],
-                        'newValue' => $value, 'status' => 'changed'];
-                }
-            }
-            //add
-        } else {
-            return  ['key' => $key, 'value' => $value, 'status' => 'added'];
-        }
-    }, array_keys($afterAsoc));
+    if($fileBeforeFormat !== $fileAfterFormat) {
+        throw new \Exception("Format of file's {$path1} and {$path2} are different!");
+    }
 
-    $deleted = array_diff_key($beforeAsoc, $afterAsoc);
+   $diffTree = buildDiffTree($contentBefore,$contentAfter,$fileBeforeFormat);
 
-    $diffDeletedPart = array_map(function ($key) use ($deleted) {
-        return ['key' => $key, 'value' => $deleted[$key], 'status' => 'deleted'];
-    }, array_keys($deleted));
-
-    return array_merge($diff, $diffDeletedPart);
+    return buildFormattedDiff($diffTree,$format);
 }
 
+function getDiffTree(array $beforeData, array $afterData)
+{
+    $beforeData = array_map(function ($item) {
+        return boolToString($item);
+    }, $beforeData);
+
+    $afterData = array_map(function ($item) {
+        return boolToString($item);
+    }, $afterData);
+
+
+    $beforeKeys = array_keys($beforeData);
+    $afterKeys = array_keys($afterData);
+    $unionKeys = array_unique(array_merge($beforeKeys, $afterKeys));
+    sort($unionKeys);
+
+    return array_map(function ($key) use ($afterData, $beforeData) {
+
+        $beforeValue = $beforeData[$key] ?? null;
+        $afterValue = $afterData[$key] ?? null;
+
+        if(is_null($beforeValue)) {
+            return  ['key' => $key, 'value' => $afterValue, 'status' => 'added'];
+        }
+
+        if(is_null($afterValue)) {
+            return  ['key' => $key, 'value' => $beforeValue, 'status' => 'deleted'];
+        }
+
+        if ($beforeValue == $afterValue) {
+            return ['key' => $key, 'value' => $beforeValue, 'status' => 'unchanged'];
+        }
+
+        if (is_array($beforeValue) && is_array($afterValue)) {
+            return ['key' => $key, 'status' => 'nested',
+                'children' => getDiffTree($beforeValue, $afterValue)];
+        } else {
+            return ['key' => $key, 'oldValue' => $beforeValue,
+                'newValue' => $afterValue, 'status' => 'changed'];
+        }
+
+    }, $unionKeys);
+
+}
 function boolToString($value)
 {
     if (is_bool($value)) {

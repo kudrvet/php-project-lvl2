@@ -3,10 +3,19 @@
     "status": "added",
     "value": false
   },
+  "common.setting1": {
+    "status": "unchanged",
+    "value": "Value1"
+  },
+  "common.setting2": {
+    "status": "removed",
+    "value" : 200
+  },
+
   "common.setting3": {
     "status": "changed",
     "from": true,
-    "to": "[complex value]"
+    "to": "{ key:value }"
   },
   "common.setting4": {
     "status": "added",
@@ -14,35 +23,42 @@
   },
   "common.setting5": {
     "status": "added",
-    "value": "[complex value]"
+    "value": "{  key5:value5 }"
+  },
+  "common.setting6.doge.wow": {
+  "status": "changed",
+    "from": "too much",
+    "to": "so much"
+  },
+  "common.setting6.key": {
+    "status": "unchanged",
+    "value": "value"
   },
   "common.setting6.ops": {
     "status": "added",
     "value": "vops"
-  },
-  "common.setting6.doge.wow": {
-    "status": "changed",
-    "from": "too much",
-    "to": "so much"
-  },
-  "common.setting2": {
-    "status": "removed"
   },
   "group1.baz": {
     "status": "changed",
     "from": "bas",
     "to": "bars"
   },
+  "group1.foo": {
+    "status": "unchanged",
+    "value": "bar"
+  },
   "group1.nest": {
     "status": "changed",
-    "from": "[complex value]",
+    "from": "{key:value}",
     "to": "str"
+  },
+  "group2": {
+    "status": "removed",
+    "value": "{abc: 12345, deep: {id: 45}}"
+
   },
   "group3": {
     "status": "added",
-    "value": "[complex value]"
-  },
-  "group2": {
-    "status": "removed"
+    "value": "{fee:100500, deep: {id: {number: 45}}}"
   }
 }

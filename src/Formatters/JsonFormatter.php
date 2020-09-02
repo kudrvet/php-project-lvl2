@@ -2,9 +2,9 @@
 
 namespace Differ\Formatters\JsonFormatter;
 
-function toJsonFormat($diffAST)
+function toJsonFormat($diffTree)
 {
-    return "{\n" . rtrim(toJson($diffAST, ""), ",\n") . "\n}";
+    return "{\n" . rtrim(toJson($diffTree, ""), ",\n") . "\n}";
 }
 
 function toJson($ast, $keysAncestors = "")

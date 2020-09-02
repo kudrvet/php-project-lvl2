@@ -4,57 +4,58 @@ namespace Differ\Formatters\PrettyFormatter;
 
 use function Funct\Strings\strip;
 
-function toPrettyFormat($diffAST)
+function toPrettyFormat($diffTree)
 {
-    return "{\n" . mainFormatting($diffAST, $deep = 0) . "}";
+    return "{\n" . mainFormatting($diffTree, $deep = 0) . "}";
 }
 
-function mainFormatting($diffAST, $deep)
+function mainFormatting($diffTree, $deep)
 {
     $formatMap = ['added' => '+ ','deleted' => '- ','unchanged' => '  '];
 
-    $formatted =  array_map(function ($key) use ($diffAST, $formatMap, $deep) {
-        $status = $diffAST[$key]['status'];
-        $keyIn = $diffAST[$key]['key'];
+    $formatted =  array_map(function ($key) use ($diffTree, $formatMap, $deep) {
+        $status = $diffTree[$key]['status'];
+        $keyIn = $diffTree[$key]['key'];
         $tab = str_repeat("    ", $deep);
         $res = $tab;
         if ($status == 'nested') {
-            $children = $diffAST[$key]['children'];
+            $children = $diffTree[$key]['children'];
             return  $res . "    " . $keyIn . ": {\n"
                 . mainFormatting($children, $deep + 1)
                 . str_repeat("    ", $deep + 1) . "}\n";
-        } else {
-            $res .= "  ";
-
-            if ($status == 'changed') {
-                if (is_array($diffAST[$key]['oldValue'])) {
-                    $res = $res . '- ' . $keyIn . ": {"
-                        . formatArray($diffAST[$key]['oldValue'], $deep)
-                        . str_repeat("    ", $deep + 1) . "}\n";
-                } else {
-                    $res = $res . '- ' . $keyIn . ': ' . $diffAST[$key]['oldValue'] . "\n";
-                }
-                // в случае changed нужно добавить еще "  " для смещения newValue;
-                $res .= $tab . "  ";
-                if (is_array($diffAST[$key]['newValue'])) {
-                    $res = $res . '+ ' . $keyIn . ": {"
-                        . formatArray($diffAST[$key]['newValue'], $deep)
-                        . str_repeat("    ", $deep + 1) . "}\n";
-                } else {
-                    $res = $res . '+ ' . $keyIn . ': ' . $diffAST[$key]['newValue'] . "\n";
-                }
-            } else {
-                if (is_array($diffAST[$key]['value'])) {
-                    $res = $res . $formatMap[$status] . $keyIn . ": {"
-                        . formatArray($diffAST[$key]['value'], $deep)
-                        . str_repeat("    ", $deep + 1) . "}\n";
-                } else {
-                    $res = $res . $formatMap[$status] . $keyIn . ': ' . $diffAST[$key]['value'] . "\n";
-                }
-            }
         }
-        return $res;
-    }, array_keys($diffAST));
+        $res .= "  ";
+        if ($status == 'changed') {
+
+            $oldValue = (is_array($diffTree[$key]['oldValue'])) ? "{"
+                . formatArray($diffTree[$key]['oldValue'],$deep)
+                . str_repeat("    ", $deep + 1)
+                . "}"
+                : $diffTree[$key]['oldValue'];
+
+            $res = $res . '- ' . $keyIn . ': ' . $oldValue . "\n";
+
+            // в случае changed нужно добавить еще "  " для смещения newValue;
+            $res .= $tab . "  ";
+
+            $newValue = (is_array($diffTree[$key]['newValue'])) ? "{"
+                . formatArray($diffTree[$key]['newValue'],$deep)
+                . str_repeat("    ", $deep + 1)
+                . "}"
+                : $diffTree[$key]['newValue'];
+
+            $res = $res . '+ ' . $keyIn . ': ' . $newValue . "\n";
+
+        } else {
+            $value = is_array($diffTree[$key]['value']) ? "{"
+                . formatArray($diffTree[$key]['value'],$deep)
+                . str_repeat("    ", $deep + 1)
+                . "}"
+                : $diffTree[$key]['value'];
+            $res = $res . $formatMap[$status] . $keyIn . ': ' . $value . "\n";
+        }
+    return $res;
+    }, array_keys($diffTree));
 
     return implode("", $formatted);
 }
