@@ -2,8 +2,6 @@
 
 namespace Differ\Formatters\PlainFormatter;
 
-use function Differ\Formatters\PrettyFormatter\boolToString;
-
 function toPlainFormat($diffTree)
 {
     return rtrim(toPlain($diffTree, ""));
@@ -23,8 +21,8 @@ function toPlain($diffTree, $keysAncestors)
             return "";
         }
         if ($status == 'changed') {
-            $oldValue = processArrayValueAndWrappring($item['oldValue']);
-            $newValue = processArrayValueAndWrappring($item['newValue']);
+            $oldValue = getFormattedValue($item['oldValue']);
+            $newValue = getFormattedValue($item['newValue']);
 
             return "Property '$fullKeysPath' was updated. From $oldValue to $newValue\n";
         }
@@ -32,7 +30,7 @@ function toPlain($diffTree, $keysAncestors)
             return "Property '$fullKeysPath' was removed\n";
         }
         if ($status == 'added') {
-            $value = processArrayValueAndWrappring($item['value']);
+            $value = getFormattedValue($item['value']);
             return  "Property '$fullKeysPath' was added with value: {$value}\n";
         }
 
@@ -42,14 +40,20 @@ function toPlain($diffTree, $keysAncestors)
     return implode("", $formatted);
 }
 
-function wrappingStrToQuotes($str)
-{
-    return ($str !== 'true' && $str !== 'false'
-        && $str !== '[complex value]' && !is_numeric($str)) ? "'" . $str . "'" : $str;
-}
 
-function processArrayValueAndWrappring($value)
+function getFormattedValue($value)
 {
-    $temp = is_array($value) ? '[complex value]' : boolToString($value);
-    return wrappingStrToQuotes($temp);
+    if(is_bool($value)) {
+        return ($value) ? 'true' : 'false';
+    }
+
+    if(is_numeric($value)) {
+        return $value;
+    }
+
+    if(is_array($value)) {
+        return '[complex value]';
+    }
+
+    return "'" . $value . "'";
 }

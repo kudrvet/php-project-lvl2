@@ -31,7 +31,7 @@ function mainFormatting($diffTree, $deep)
                 . str_repeat("    ", $deep + 1)
                 . "}"
                 : $diffTree[$key]['oldValue'];
-            $oldValue = boolToString($oldValue);
+            $oldValue = getFormattedValue($oldValue);
             $res = $res . '- ' . $keyIn . ': ' . $oldValue . "\n";
 
             // в случае changed нужно добавить еще "  " для смещения newValue;
@@ -42,7 +42,7 @@ function mainFormatting($diffTree, $deep)
                 . str_repeat("    ", $deep + 1)
                 . "}"
                 : $diffTree[$key]['newValue'];
-            $newValue = boolToString($newValue);
+            $newValue = getFormattedValue($newValue);
 
             $res = $res . '+ ' . $keyIn . ': ' . $newValue . "\n";
         } else {
@@ -51,7 +51,7 @@ function mainFormatting($diffTree, $deep)
                 . str_repeat("    ", $deep + 1)
                 . "}"
                 : $diffTree[$key]['value'];
-            $value = boolToString($value);
+            $value = getFormattedValue($value);
             $res = $res . $formatMap[$status] . $keyIn . ': ' . $value . "\n";
         }
         return $res;
@@ -68,7 +68,7 @@ function formatArray($array, $deep)
 
     return $res;
 }
-function boolToString($value)
+function getFormattedValue($value)
 {
     if (is_bool($value)) {
         return ($value) ? 'true' : 'false';
