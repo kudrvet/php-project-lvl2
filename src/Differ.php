@@ -59,15 +59,6 @@ function genDiff($path1, $path2, $format = 'pretty')
 
 function getDiffTree(array $beforeData, array $afterData)
 {
-//    $beforeData = array_map(function ($item) {
-//        return boolToString($item);
-//    }, $beforeData);
-//
-//    $afterData = array_map(function ($item) {
-//        return boolToString($item);
-//    }, $afterData);
-
-
     $beforeKeys = array_keys($beforeData);
     $afterKeys = array_keys($afterData);
     $unionKeys = array_unique(array_merge($beforeKeys, $afterKeys));
@@ -79,11 +70,11 @@ function getDiffTree(array $beforeData, array $afterData)
         $afterValue = $afterData[$key] ?? null;
 
         if (is_null($beforeValue)) {
-            return  ['key' => $key, 'status' => 'added','value' => $afterValue];
+            return ['key' => $key, 'status' => 'added', 'value' => $afterValue];
         }
 
         if (is_null($afterValue)) {
-            return  ['key' => $key, 'status' => 'deleted', 'value' => $beforeValue];
+            return ['key' => $key, 'status' => 'deleted', 'value' => $beforeValue];
         }
 
         if ($beforeValue === $afterValue) {
@@ -94,15 +85,8 @@ function getDiffTree(array $beforeData, array $afterData)
             return ['key' => $key, 'status' => 'nested',
                 'children' => getDiffTree($beforeValue, $afterValue)];
         } else {
-            return ['key' => $key, 'status' => 'changed','oldValue' => $beforeValue,
-                'newValue' => $afterValue, ];
+            return ['key' => $key, 'status' => 'changed', 'oldValue' => $beforeValue,
+                'newValue' => $afterValue,];
         }
     }, $unionKeys);
 }
-//function boolToString($value)
-//{
-//    if (is_bool($value)) {
-//        return ($value) ? 'true' : 'false';
-//    }
-//    return $value;
-//}

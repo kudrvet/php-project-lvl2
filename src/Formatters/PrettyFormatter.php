@@ -6,10 +6,10 @@ use function Funct\Strings\strip;
 
 function toPrettyFormat($diffTree)
 {
-    return "{\n" . mainFormatting($diffTree, $deep = 0) . "}";
+    return "{\n" . toPretty($diffTree, $deep = 0) . "}";
 }
 
-function mainFormatting($diffTree, $deep)
+function toPretty($diffTree, $deep)
 {
     $formatMap = ['added' => '+ ','deleted' => '- ','unchanged' => '  '];
 
@@ -21,7 +21,7 @@ function mainFormatting($diffTree, $deep)
         if ($status == 'nested') {
             $children = $diffTree[$key]['children'];
             return  $res . "    " . $keyIn . ": {\n"
-                . mainFormatting($children, $deep + 1)
+                . toPretty($children, $deep + 1)
                 . str_repeat("    ", $deep + 1) . "}\n";
         }
         $res .= "  ";
@@ -32,6 +32,7 @@ function mainFormatting($diffTree, $deep)
                 . "}"
                 : $diffTree[$key]['oldValue'];
             $oldValue = getFormattedValue($oldValue);
+
             $res = $res . '- ' . $keyIn . ': ' . $oldValue . "\n";
 
             // в случае changed нужно добавить еще "  " для смещения newValue;
@@ -52,6 +53,7 @@ function mainFormatting($diffTree, $deep)
                 . "}"
                 : $diffTree[$key]['value'];
             $value = getFormattedValue($value);
+
             $res = $res . $formatMap[$status] . $keyIn . ': ' . $value . "\n";
         }
         return $res;
@@ -59,6 +61,7 @@ function mainFormatting($diffTree, $deep)
 
     return implode("", $formatted);
 }
+
 function formatArray($array, $deep)
 {
     $stripedStr = strip(json_encode($array, JSON_PRETTY_PRINT), "\"", ",");
@@ -68,6 +71,7 @@ function formatArray($array, $deep)
 
     return $res;
 }
+
 function getFormattedValue($value)
 {
     if (is_bool($value)) {

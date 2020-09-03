@@ -15,22 +15,27 @@ function toPlain($diffTree, $keysAncestors)
             $keysAncestors .= empty($keysAncestors) ? "{$item['key']}" : ".{$item['key']}";
             return toPlain($children, $keysAncestors);
         }
+
         $key = $item['key'];
         $fullKeysPath = empty($keysAncestors) ? $key : $keysAncestors . "." . $key;
+
         if ($status == 'unchanged') {
             return "";
         }
+
         if ($status == 'changed') {
             $oldValue = getFormattedValue($item['oldValue']);
             $newValue = getFormattedValue($item['newValue']);
 
             return "Property '$fullKeysPath' was updated. From $oldValue to $newValue\n";
         }
+
         if ($status == 'deleted') {
             return "Property '$fullKeysPath' was removed\n";
         }
         if ($status == 'added') {
             $value = getFormattedValue($item['value']);
+
             return  "Property '$fullKeysPath' was added with value: {$value}\n";
         }
 
@@ -39,7 +44,6 @@ function toPlain($diffTree, $keysAncestors)
 
     return implode("", $formatted);
 }
-
 
 function getFormattedValue($value)
 {
