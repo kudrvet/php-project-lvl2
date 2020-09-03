@@ -43,15 +43,15 @@ function toPlain($diffTree, $keysAncestors)
 
 function getFormattedValue($value)
 {
-    if(is_bool($value)) {
+    if (is_bool($value)) {
         return ($value) ? 'true' : 'false';
     }
 
-    if(is_numeric($value)) {
+    if (is_numeric($value)) {
         return $value;
     }
 
-    if(is_array($value)) {
+    if (is_array($value)) {
         return '[complex value]';
     }
 
