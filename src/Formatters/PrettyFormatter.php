@@ -26,35 +26,35 @@ function mainFormatting($diffTree, $deep)
         }
         $res .= "  ";
         if ($status == 'changed') {
-
             $oldValue = (is_array($diffTree[$key]['oldValue'])) ? "{"
-                . formatArray($diffTree[$key]['oldValue'],$deep)
+                . formatArray($diffTree[$key]['oldValue'], $deep)
                 . str_repeat("    ", $deep + 1)
                 . "}"
                 : $diffTree[$key]['oldValue'];
-
+            $oldValue = boolToString($oldValue);
             $res = $res . '- ' . $keyIn . ': ' . $oldValue . "\n";
 
             // в случае changed нужно добавить еще "  " для смещения newValue;
             $res .= $tab . "  ";
 
             $newValue = (is_array($diffTree[$key]['newValue'])) ? "{"
-                . formatArray($diffTree[$key]['newValue'],$deep)
+                . formatArray($diffTree[$key]['newValue'], $deep)
                 . str_repeat("    ", $deep + 1)
                 . "}"
                 : $diffTree[$key]['newValue'];
+            $newValue = boolToString($newValue);
 
             $res = $res . '+ ' . $keyIn . ': ' . $newValue . "\n";
-
         } else {
             $value = is_array($diffTree[$key]['value']) ? "{"
-                . formatArray($diffTree[$key]['value'],$deep)
+                . formatArray($diffTree[$key]['value'], $deep)
                 . str_repeat("    ", $deep + 1)
                 . "}"
                 : $diffTree[$key]['value'];
+            $value = boolToString($value);
             $res = $res . $formatMap[$status] . $keyIn . ': ' . $value . "\n";
         }
-    return $res;
+        return $res;
     }, array_keys($diffTree));
 
     return implode("", $formatted);
@@ -67,4 +67,11 @@ function formatArray($array, $deep)
     $res = str_replace("\n    ", "\n" . $tab . "    ", $trimed);
 
     return $res;
+}
+function boolToString($value)
+{
+    if (is_bool($value)) {
+        return ($value) ? 'true' : 'false';
+    }
+    return $value;
 }

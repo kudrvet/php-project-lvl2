@@ -2,6 +2,8 @@
 
 namespace Differ\Formatters\PlainFormatter;
 
+use function Differ\Formatters\PrettyFormatter\boolToString;
+
 function toPlainFormat($diffTree)
 {
     return rtrim(toPlain($diffTree, ""));
@@ -22,7 +24,6 @@ function toPlain($diffTree, $keysAncestors)
             return "";
         }
         if ($status == 'changed') {
-
             $oldValue = processArrayValueAndWrappring($item['oldValue']);
             $newValue = processArrayValueAndWrappring($item['newValue']);
 
@@ -39,7 +40,6 @@ function toPlain($diffTree, $keysAncestors)
         }
 
         return "";
-
     }, $diffTree);
 
     return implode("", $formatted);
@@ -53,6 +53,6 @@ function wrappingStrToQuotes($str)
 
 function processArrayValueAndWrappring($value)
 {
-    $temp = is_array($value) ? '[complex value]' : $value;
+    $temp = is_array($value) ? '[complex value]' : boolToString($value);
     return wrappingStrToQuotes($temp);
 }

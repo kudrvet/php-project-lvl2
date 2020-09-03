@@ -8,7 +8,7 @@ use function Differ\Formatters\PlainFormatter\toPlainFormat;
 use function Differ\Parsers\YamlParser\toAsoc;
 use function Differ\Parsers\JsonParser\toAsoc as jsonToAsoc;
 
-function buildDiffTree($conten1,$content2,$contentFormat)
+function buildDiffTree($conten1, $content2, $contentFormat)
 {
     switch ($contentFormat) {
         case "yaml":
@@ -26,7 +26,7 @@ function buildDiffTree($conten1,$content2,$contentFormat)
     return getDiffTree($beforeData, $afterData);
 }
 
-function buildFormattedDiff($diffTree,$format)
+function buildFormattedDiff($diffTree, $format)
 {
     switch ($format) {
         case 'pretty':
@@ -42,30 +42,30 @@ function buildFormattedDiff($diffTree,$format)
 
 function genDiff($path1, $path2, $format = 'pretty')
 {
-    $contentBefore= file_get_contents($path1, true);
+    $contentBefore = file_get_contents($path1, true);
     $contentAfter = file_get_contents($path2, true);
 
     $fileBeforeFormat = pathinfo($path1, PATHINFO_EXTENSION);
-    $fileAfterFormat= pathinfo($path2, PATHINFO_EXTENSION);
+    $fileAfterFormat = pathinfo($path2, PATHINFO_EXTENSION);
 
-    if($fileBeforeFormat !== $fileAfterFormat) {
+    if ($fileBeforeFormat !== $fileAfterFormat) {
         throw new \Exception("Format of file's {$path1} and {$path2} are different!");
     }
 
-   $diffTree = buildDiffTree($contentBefore,$contentAfter,$fileBeforeFormat);
+    $diffTree = buildDiffTree($contentBefore, $contentAfter, $fileBeforeFormat);
 
-    return buildFormattedDiff($diffTree,$format);
+    return buildFormattedDiff($diffTree, $format);
 }
 
 function getDiffTree(array $beforeData, array $afterData)
 {
-    $beforeData = array_map(function ($item) {
-        return boolToString($item);
-    }, $beforeData);
-
-    $afterData = array_map(function ($item) {
-        return boolToString($item);
-    }, $afterData);
+//    $beforeData = array_map(function ($item) {
+//        return boolToString($item);
+//    }, $beforeData);
+//
+//    $afterData = array_map(function ($item) {
+//        return boolToString($item);
+//    }, $afterData);
 
 
     $beforeKeys = array_keys($beforeData);
@@ -78,33 +78,31 @@ function getDiffTree(array $beforeData, array $afterData)
         $beforeValue = $beforeData[$key] ?? null;
         $afterValue = $afterData[$key] ?? null;
 
-        if(is_null($beforeValue)) {
-            return  ['key' => $key, 'value' => $afterValue, 'status' => 'added'];
+        if (is_null($beforeValue)) {
+            return  ['key' => $key, 'status' => 'added','value' => $afterValue];
         }
 
-        if(is_null($afterValue)) {
-            return  ['key' => $key, 'value' => $beforeValue, 'status' => 'deleted'];
+        if (is_null($afterValue)) {
+            return  ['key' => $key, 'status' => 'deleted', 'value' => $beforeValue];
         }
 
-        if ($beforeValue == $afterValue) {
-            return ['key' => $key, 'value' => $beforeValue, 'status' => 'unchanged'];
+        if ($beforeValue === $afterValue) {
+            return ['key' => $key, 'status' => 'unchanged', 'value' => $beforeValue];
         }
 
         if (is_array($beforeValue) && is_array($afterValue)) {
             return ['key' => $key, 'status' => 'nested',
                 'children' => getDiffTree($beforeValue, $afterValue)];
         } else {
-            return ['key' => $key, 'oldValue' => $beforeValue,
-                'newValue' => $afterValue, 'status' => 'changed'];
+            return ['key' => $key, 'status' => 'changed','oldValue' => $beforeValue,
+                'newValue' => $afterValue, ];
         }
-
     }, $unionKeys);
-
 }
-function boolToString($value)
-{
-    if (is_bool($value)) {
-        return ($value) ? 'true' : 'false';
-    }
-    return $value;
-}
+//function boolToString($value)
+//{
+//    if (is_bool($value)) {
+//        return ($value) ? 'true' : 'false';
+//    }
+//    return $value;
+//}
