@@ -10,13 +10,11 @@ function toPlain($diffTree, $keysAncestors)
 {
     $formatted =  array_map(function ($item) use ($keysAncestors) {
         $status = $item['status'];
-        if ($status == 'nested') {
-            $keysAncestorsUpdated = empty($keysAncestors) ? "{$item['key']}" : "$keysAncestors.{$item['key']}";
-            return toPlain($item['children'], $keysAncestorsUpdated);
-        }
+        $keysPath = empty($keysAncestors) ? "{$item['key']}" : "$keysAncestors.{$item['key']}";
 
-        $key = $item['key'];
-        $fullKeysPath = empty($keysAncestors) ? $key : $keysAncestors . "." . $key;
+        if ($status == 'nested') {
+            return toPlain($item['children'], $keysPath);
+        }
 
         if ($status == 'unchanged') {
             return "";
@@ -26,16 +24,16 @@ function toPlain($diffTree, $keysAncestors)
             $oldValue = getFormattedValue($item['oldValue']);
             $newValue = getFormattedValue($item['newValue']);
 
-            return "Property '$fullKeysPath' was updated. From $oldValue to $newValue\n";
+            return "Property '$keysPath' was updated. From $oldValue to $newValue\n";
         }
 
         if ($status == 'deleted') {
-            return "Property '$fullKeysPath' was removed\n";
+            return "Property '$keysPath' was removed\n";
         }
         if ($status == 'added') {
             $value = getFormattedValue($item['value']);
 
-            return  "Property '$fullKeysPath' was added with value: {$value}\n";
+            return  "Property '$keysPath' was added with value: {$value}\n";
         }
 
         return "";
