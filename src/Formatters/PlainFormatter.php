@@ -11,9 +11,8 @@ function toPlain($diffTree, $keysAncestors)
     $formatted =  array_map(function ($item) use ($keysAncestors) {
         $status = $item['status'];
         if ($status == 'nested') {
-            $children = $item['children'];
             $keysAncestorsUpdated = empty($keysAncestors) ? "{$item['key']}" : "$keysAncestors.{$item['key']}";
-            return toPlain($children, $keysAncestorsUpdated);
+            return toPlain($item['children'], $keysAncestorsUpdated);
         }
 
         $key = $item['key'];
