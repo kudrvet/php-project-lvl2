@@ -5,25 +5,70 @@ namespace Differ\Differ;
 use function Differ\Formatters\JsonFormatter\toJsonFormat;
 use function Differ\Formatters\PrettyFormatter\toPrettyFormat;
 use function Differ\Formatters\PlainFormatter\toPlainFormat;
-use function Differ\Parsers\YamlParser\toAsoc;
-use function Differ\Parsers\JsonParser\toAsoc as jsonToAsoc;
+use function Differ\Parsers\JsonParser\parseJsonToData;
+use function Differ\Parsers\YamlParser\parseYamlToData;
 
-function buildDiffTree($conten1, $content2, $contentFormat)
+function genDiff($path1, $path2, $format = 'pretty')
 {
-    switch ($contentFormat) {
+    $contentBefore = file_get_contents($path1, true);
+    $contentAfter = file_get_contents($path2, true);
+
+    $fileBeforeFormat = pathinfo($path1, PATHINFO_EXTENSION);
+    $fileAfterFormat = pathinfo($path2, PATHINFO_EXTENSION);
+
+    $beforeData = getDataFromContent($contentBefore, $fileBeforeFormat);
+    $afterData = getDataFromContent($contentAfter, $fileAfterFormat);
+
+    $diffTree = getDiffTree($beforeData, $afterData);
+
+    return buildFormattedDiff($diffTree, $format);
+}
+
+function getDataFromContent($content, $format)
+{
+    switch ($format) {
         case "yaml":
-            $beforeData = toAsoc($conten1);
-            $afterData = toAsoc($content2);
+            $data = parseYamlToData($content);
             break;
         case "json":
-            $beforeData = jsonToAsoc($conten1);
-            $afterData = jsonToAsoc($content2);
+            $data = parseJsonToData($content);
             break;
         default:
-            throw new \Exception("Format {$contentFormat} is not supported! ");
+            throw new \Exception("Format {$format} is not supported! ");
     }
 
-    return getDiffTree($beforeData, $afterData);
+    return $data;
+}
+
+function getDiffTree(array $beforeData, array $afterData)
+{
+    $beforeKeys = array_keys($beforeData);
+    $afterKeys = array_keys($afterData);
+    $unionKeys = array_unique(array_merge($beforeKeys, $afterKeys));
+    sort($unionKeys);
+
+    return array_map(function ($key) use ($afterData, $beforeData) {
+
+        if (!array_key_exists($key, $beforeData)) {
+            return ['key' => $key, 'status' => 'added', 'value' => $afterData[$key]];
+        }
+
+        if (!array_key_exists($key, $afterData)) {
+            return ['key' => $key, 'status' => 'deleted', 'value' => $beforeData[$key]];
+        }
+
+        if ($beforeData[$key] === $afterData[$key]) {
+            return ['key' => $key, 'status' => 'unchanged', 'value' => $beforeData[$key]];
+        }
+
+        if (is_array($beforeData[$key]) && is_array($afterData[$key])) {
+            return ['key' => $key, 'status' => 'nested',
+                'children' => getDiffTree($beforeData[$key], $afterData[$key])];
+        } else {
+            return ['key' => $key, 'status' => 'changed', 'oldValue' => $beforeData[$key],
+                'newValue' => $afterData[$key],];
+        }
+    }, $unionKeys);
 }
 
 function buildFormattedDiff($diffTree, $format)
@@ -38,55 +83,4 @@ function buildFormattedDiff($diffTree, $format)
         default:
             throw new \Exception("Output format {$format} is not supported!");
     }
-}
-
-function genDiff($path1, $path2, $format = 'pretty')
-{
-    $contentBefore = file_get_contents($path1, true);
-    $contentAfter = file_get_contents($path2, true);
-
-    $fileBeforeFormat = pathinfo($path1, PATHINFO_EXTENSION);
-    $fileAfterFormat = pathinfo($path2, PATHINFO_EXTENSION);
-
-    if ($fileBeforeFormat !== $fileAfterFormat) {
-        throw new \Exception("Format of file's {$path1} and {$path2} are different!");
-    }
-
-    $diffTree = buildDiffTree($contentBefore, $contentAfter, $fileBeforeFormat);
-
-    return buildFormattedDiff($diffTree, $format);
-}
-
-function getDiffTree(array $beforeData, array $afterData)
-{
-    $beforeKeys = array_keys($beforeData);
-    $afterKeys = array_keys($afterData);
-    $unionKeys = array_unique(array_merge($beforeKeys, $afterKeys));
-    sort($unionKeys);
-
-    return array_map(function ($key) use ($afterData, $beforeData) {
-
-        $beforeValue = $beforeData[$key] ?? null;
-        $afterValue = $afterData[$key] ?? null;
-
-        if (is_null($beforeValue)) {
-            return ['key' => $key, 'status' => 'added', 'value' => $afterValue];
-        }
-
-        if (is_null($afterValue)) {
-            return ['key' => $key, 'status' => 'deleted', 'value' => $beforeValue];
-        }
-
-        if ($beforeValue === $afterValue) {
-            return ['key' => $key, 'status' => 'unchanged', 'value' => $beforeValue];
-        }
-
-        if (is_array($beforeValue) && is_array($afterValue)) {
-            return ['key' => $key, 'status' => 'nested',
-                'children' => getDiffTree($beforeValue, $afterValue)];
-        } else {
-            return ['key' => $key, 'status' => 'changed', 'oldValue' => $beforeValue,
-                'newValue' => $afterValue,];
-        }
-    }, $unionKeys);
 }

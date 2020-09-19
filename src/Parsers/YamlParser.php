@@ -4,7 +4,7 @@ namespace Differ\Parsers\YamlParser;
 
 use Symfony\Component\Yaml\Yaml;
 
-function toAsoc($yaml)
+function parseYamlToData($yaml)
 {
     return Yaml::parse($yaml);
 }
