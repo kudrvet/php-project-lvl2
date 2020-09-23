@@ -12,28 +12,26 @@ function toPlain($diffTree, $keysAncestors)
         $status = $item['status'];
         $keysPath = empty($keysAncestors) ? "{$item['key']}" : "$keysAncestors.{$item['key']}";
 
-        if ($status == 'nested') {
-            return toPlain($item['children'], $keysPath);
-        }
+        switch ($status) {
+            case 'nested':
+                return toPlain($item['children'], $keysPath);
 
-        if ($status == 'unchanged') {
-            return "";
-        }
+            case 'unchanged':
+                return "";
 
-        if ($status == 'changed') {
-            $oldValue = getFormattedValue($item['oldValue']);
-            $newValue = getFormattedValue($item['newValue']);
+            case 'changed':
+                $oldValue = getFormattedValue($item['oldValue']);
+                $newValue = getFormattedValue($item['newValue']);
 
-            return "Property '$keysPath' was updated. From $oldValue to $newValue\n";
-        }
+                return "Property '$keysPath' was updated. From $oldValue to $newValue\n";
 
-        if ($status == 'deleted') {
-            return "Property '$keysPath' was removed\n";
-        }
-        if ($status == 'added') {
-            $value = getFormattedValue($item['value']);
+            case 'deleted':
+                return "Property '$keysPath' was removed\n";
 
-            return  "Property '$keysPath' was added with value: {$value}\n";
+            case 'added':
+                $value = getFormattedValue($item['value']);
+
+                return "Property '$keysPath' was added with value: {$value}\n";
         }
 
         return "";
@@ -56,5 +54,5 @@ function getFormattedValue($value)
         return '[complex value]';
     }
 
-    return "'" . $value . "'";
+    return "'{$value}'";
 }

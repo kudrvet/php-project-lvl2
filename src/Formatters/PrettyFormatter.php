@@ -2,59 +2,38 @@
 
 namespace Differ\Formatters\PrettyFormatter;
 
-function toPrettyFormat($diffTree)
-{
-    return "{\n" . toPretty($diffTree, $deep = 0) . "}";
-}
-
-function toPretty($diffTree, $deep)
+function toPrettyFormat($diffTree, $deep = 0)
 {
     $formatMap = ['added' => '+ ','deleted' => '- ','unchanged' => '  '];
+    $tab = str_repeat("    ", $deep);
+    $formatted =  array_map(function ($outerKey) use ($diffTree, $formatMap, $deep, $tab) {
+        $status = $diffTree[$outerKey]['status'];
+        $key = $diffTree[$outerKey]['key'];
 
-    $formatted =  array_map(function ($key) use ($diffTree, $formatMap, $deep) {
-        $status = $diffTree[$key]['status'];
-        $keyIn = $diffTree[$key]['key'];
-        $tab = str_repeat("    ", $deep);
-        if ($status == 'nested') {
-            $children = $diffTree[$key]['children'];
-            return  $tab . "    " . $keyIn . ": {\n"
-                . toPretty($children, $deep + 1)
-                . str_repeat("    ", $deep + 1) . "}\n";
+        switch ($status) {
+            case 'nested':
+                $children = $diffTree[$outerKey]['children'];
+                $formattedValue = toPrettyFormat($children, $deep + 1);
+                return "{$tab}    {$key}: {$formattedValue}";
+
+            case 'changed':
+                $oldValueFormatted = getFormattedValue($diffTree[$outerKey]['oldValue'], $deep);
+                $oldValueResult = "{$tab}  - {$key}: {$oldValueFormatted}\n";
+
+                $newValueFormatted = getFormattedValue($diffTree[$outerKey]['newValue'], $deep);
+                $newValueResult = "{$tab}  + {$key}: {$newValueFormatted}";
+
+                return $oldValueResult . $newValueResult;
+
+            default:
+                $value = getFormattedValue($diffTree[$outerKey]['value'], $deep);
+
+                return "{$tab}  {$formatMap[$status]}{$key}: {$value}";
         }
-        if ($status == 'changed') {
-            $oldValueFormatted = getFormattedValue($diffTree[$key]['oldValue'], $deep);
-            $oldValueResult = $tab . "  " . '- ' . $keyIn . ': ' . $oldValueFormatted . "\n";
-
-            $newValueFormatted = getFormattedValue($diffTree[$key]['newValue'], $deep);
-            $newValueResult = $tab . "  " . '+ ' . $keyIn . ': ' . $newValueFormatted . "\n";
-
-            return $oldValueResult . $newValueResult;
-        }
-
-        $value = getFormattedValue($diffTree[$key]['value'], $deep);
-
-        return $tab . "  " . $formatMap[$status] . $keyIn . ': ' . $value . "\n";
     }, array_keys($diffTree));
 
-    return implode("", $formatted);
-}
-
-function formatArray($array, $deep)
-{
-    $formatted = array_map(function ($key) use ($array, $deep) {
-
-        if (!is_array($array[$key])) {
-            return str_repeat("    ", $deep + 2)
-            . $key . ": " . $array[$key] . "\n";
-        }
-        return str_repeat("    ", $deep + 2)
-            . $key . ": {\n"
-            . formatArray($array[$key], $deep + 1)
-            . str_repeat("    ", $deep + 2)
-            . "}\n";
-    }, array_keys($array));
-
-    return  implode("", $formatted);
+    $temp = implode("\n", $formatted);
+    return "{\n{$temp}\n{$tab}}";
 }
 
 function getFormattedValue($value, $deep)
@@ -63,10 +42,16 @@ function getFormattedValue($value, $deep)
         return ($value) ? 'true' : 'false';
     }
     if (is_array($value)) {
-        return "{\n"
-            . formatArray($value, $deep)
-            . str_repeat("    ", $deep + 1)
-            . "}";
+        $tab = str_repeat("    ", $deep + 1);
+        $formatted = array_map(function ($key) use ($value, $deep, $tab) {
+            $formattedValue = is_array($value[$key]) ? getFormattedValue($value[$key], $deep + 1) : $value[$key];
+
+            return "{$tab}    {$key}: {$formattedValue}";
+        }, array_keys($value));
+
+        $temp = implode("\n", $formatted);
+
+        return "{\n{$temp}\n{$tab}}";
     }
     return $value;
 }

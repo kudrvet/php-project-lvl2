@@ -10,6 +10,7 @@ if (file_exists($autoloadPath1)) {
     require_once $autoloadPath2;
 }
 
+use mysql_xdevapi\Exception;
 use PHPUnit\Framework\TestCase;
 use function Differ\Differ\genDiff;
 
@@ -19,42 +20,50 @@ class DifferTest extends TestCase
      * @dataProvider additionProvider
      */
 
-    public function testGenDiff($pathToExpected,$pathToFileBefore,$pathToFileAfter,$format)
+    public function testGenDiff($dataFormat,$formatter)
     {
-        $expected = file_get_contents($pathToExpected);
-        $actual = genDiff($pathToFileBefore, $pathToFileAfter,$format);
+        switch ($dataFormat){
+            case 'json':
+                $pathToFileBefore  = './tests/fixtures/before.json';
+                $pathToFileAfter = './tests/fixtures/after.json';
+                break;
+            case 'yaml':
+                $pathToFileBefore  = './tests/fixtures/before.yaml';
+                $pathToFileAfter = './tests/fixtures/after.yaml';
+                break;
+            default:
+                throw new \Exception ("Format {$dataFormat} is not supported! ");
+        }
+
+        switch ($formatter) {
+            case 'pretty':
+                $expected = file_get_contents('./tests/fixtures/prettyFormatterResult');
+                break;
+            case 'plain':
+                $expected = file_get_contents('./tests/fixtures/plainFormatterResult');
+                break;
+            case 'json':
+                $expected = file_get_contents('./tests/fixtures/jsonFormatterResult.json');
+                break;
+            default:
+                throw new \Exception ("Formatter {$formatter} is not supported! ");
+        }
+
+        $actual = genDiff($pathToFileBefore, $pathToFileAfter,$formatter);
         $this->assertEquals($expected, $actual);
     }
-    public function additionProvider()
-    {
-        $pathsToExpected = [
-            './tests/fixtures/recursiveInputWithPrettyFormatterResult',
-            './tests/fixtures/recursiveInputWithPrettyFormatterResult',
-            './tests/fixtures/recursiveInputWithPlainFormatterResult',
-            './tests/fixtures/recursiveInputWithPlainFormatterResult',
-            './tests/fixtures/recursiveInputWithJsonFormatterResult.json',
-            './tests/fixtures/recursiveInputWithJsonFormatterResult.json'
-        ];
 
-        $pathsToFileBefore= [
-            './tests/fixtures/recursiveJsonBefore.json',
-            './tests/fixtures/recursiveYmlBefore.yaml',
-            './tests/fixtures/recursiveJsonBefore.json',
-            './tests/fixtures/recursiveYmlBefore.yaml',
-            './tests/fixtures/recursiveJsonBefore.json',
-            './tests/fixtures/recursiveYmlBefore.yaml'
-        ];
+    public function additionProvider() {
 
-        $pathsToFileAfter = [
-            './tests/fixtures/recursiveJsonAfter.json',
-            './tests/fixtures/recursiveYmlAfter.yaml',
-            './tests/fixtures/recursiveJsonAfter.json',
-            './tests/fixtures/recursiveYmlAfter.yaml',
-            './tests/fixtures/recursiveJsonAfter.json',
-            './tests/fixtures/recursiveYmlAfter.yaml'
+        $dataFormats  = [
+            'json',
+            'yaml',
+            'json',
+            'yaml',
+            'json',
+            'yaml'
         ];
-
-        $formats = [
+        $formatters = [
             'pretty',
             'pretty',
             'plain',
@@ -64,12 +73,13 @@ class DifferTest extends TestCase
         ];
 
         $res =[];
-        foreach ($pathsToExpected as $key => $expected) {
-            $res[] = [$expected, $pathsToFileBefore[$key], $pathsToFileAfter[$key], $formats[$key]];
+        foreach ($dataFormats as $key => $dataFormat) {
+            $res[] = [$dataFormat, $formatters[$key]];
         }
 
         return $res;
     }
+
 }
 
 
