@@ -2,13 +2,15 @@
 
 namespace Differ\Formatters\PlainFormatter;
 
+use function Funct\Collection\flattenAll;
+
 function toPlainFormat($diffTree)
 {
     return rtrim(toPlain($diffTree, ""));
 }
 function toPlain($diffTree, $keysAncestors)
 {
-    $formatted =  array_map(function ($item) use ($keysAncestors) {
+    $formattedData =  array_map(function ($item) use ($keysAncestors) {
         $status = $item['status'];
         $keysPath = empty($keysAncestors) ? "{$item['key']}" : "$keysAncestors.{$item['key']}";
 
@@ -17,27 +19,28 @@ function toPlain($diffTree, $keysAncestors)
                 return toPlain($item['children'], $keysPath);
 
             case 'unchanged':
-                return "";
+                return [];
 
             case 'changed':
                 $oldValue = getFormattedValue($item['oldValue']);
                 $newValue = getFormattedValue($item['newValue']);
 
-                return "Property '$keysPath' was updated. From $oldValue to $newValue\n";
+                return "Property '$keysPath' was updated. From $oldValue to $newValue";
 
             case 'deleted':
-                return "Property '$keysPath' was removed\n";
+                return "Property '$keysPath' was removed";
 
             case 'added':
                 $value = getFormattedValue($item['value']);
 
-                return "Property '$keysPath' was added with value: {$value}\n";
-        }
+                return "Property '$keysPath' was added with value: {$value}";
 
-        return "";
+            default:
+                throw new \Exception("Status {$status} should not existed in /$/diffTree[/$/outerKey]['status']");
+        }
     }, $diffTree);
 
-    return implode("", $formatted);
+    return implode("\n", flattenAll($formattedData));
 }
 
 function getFormattedValue($value)

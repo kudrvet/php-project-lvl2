@@ -6,7 +6,7 @@ function toPrettyFormat($diffTree, $deep = 0)
 {
     $formatMap = ['added' => '+ ','deleted' => '- ','unchanged' => '  '];
     $tab = str_repeat("    ", $deep);
-    $formatted =  array_map(function ($outerKey) use ($diffTree, $formatMap, $deep, $tab) {
+    $formattedData =  array_map(function ($outerKey) use ($diffTree, $formatMap, $deep, $tab) {
         $status = $diffTree[$outerKey]['status'];
         $key = $diffTree[$outerKey]['key'];
 
@@ -25,15 +25,17 @@ function toPrettyFormat($diffTree, $deep = 0)
 
                 return $oldValueResult . $newValueResult;
 
-            default:
+            case 'added' || 'deleted' || 'unchanged':
                 $value = getFormattedValue($diffTree[$outerKey]['value'], $deep);
 
                 return "{$tab}  {$formatMap[$status]}{$key}: {$value}";
+            default:
+                throw new \Exception("Status {$status} should not existed in /$/diffTree[/$/outerKey]['status']");
         }
     }, array_keys($diffTree));
 
-    $temp = implode("\n", $formatted);
-    return "{\n{$temp}\n{$tab}}";
+    $formattedResult = implode("\n", $formattedData);
+    return "{\n{$formattedResult}\n{$tab}}";
 }
 
 function getFormattedValue($value, $deep)

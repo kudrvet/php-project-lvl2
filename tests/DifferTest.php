@@ -10,7 +10,6 @@ if (file_exists($autoloadPath1)) {
     require_once $autoloadPath2;
 }
 
-use mysql_xdevapi\Exception;
 use PHPUnit\Framework\TestCase;
 use function Differ\Differ\genDiff;
 
@@ -20,67 +19,50 @@ class DifferTest extends TestCase
      * @dataProvider additionProvider
      */
 
-    public function testGenDiff($dataFormat,$formatter)
-    {
-        switch ($dataFormat){
-            case 'json':
-                $pathToFileBefore  = './tests/fixtures/before.json';
-                $pathToFileAfter = './tests/fixtures/after.json';
-                break;
-            case 'yaml':
-                $pathToFileBefore  = './tests/fixtures/before.yaml';
-                $pathToFileAfter = './tests/fixtures/after.yaml';
-                break;
-            default:
-                throw new \Exception ("Format {$dataFormat} is not supported! ");
-        }
+    public function testGenDiff($pathToFileBefore, $pathToFileAfter,$formatterWithPathToResult)
 
-        switch ($formatter) {
-            case 'pretty':
-                $expected = file_get_contents('./tests/fixtures/prettyFormatterResult');
-                break;
-            case 'plain':
-                $expected = file_get_contents('./tests/fixtures/plainFormatterResult');
-                break;
-            case 'json':
-                $expected = file_get_contents('./tests/fixtures/jsonFormatterResult.json');
-                break;
-            default:
-                throw new \Exception ("Formatter {$formatter} is not supported! ");
-        }
+    {
+        $formatter = $formatterWithPathToResult['formatter'];
+        $pathToResult = $formatterWithPathToResult['path'];
 
         $actual = genDiff($pathToFileBefore, $pathToFileAfter,$formatter);
+        $expected = file_get_contents($pathToResult);
+
         $this->assertEquals($expected, $actual);
+
     }
 
-    public function additionProvider() {
+    public function additionProvider()
+    {
 
-        $dataFormats  = [
-            'json',
-            'yaml',
-            'json',
-            'yaml',
-            'json',
-            'yaml'
-        ];
-        $formatters = [
-            'pretty',
-            'pretty',
-            'plain',
-            'plain',
-            'json',
-            'json'
+        $pathsToFileBefore = [
+            './tests/fixtures/before.json',
+            './tests/fixtures/before.yaml'
         ];
 
-        $res =[];
-        foreach ($dataFormats as $key => $dataFormat) {
-            $res[] = [$dataFormat, $formatters[$key]];
+        $pathsToFileAfter = [
+            './tests/fixtures/after.json',
+            './tests/fixtures/after.yaml',
+        ];
+
+        $formattersWithPathsToResult = [
+            ['formatter'=>'pretty', 'path' =>'./tests/fixtures/prettyFormatterResult'],
+            ['formatter' => 'plain','path' => './tests/fixtures/plainFormatterResult'],
+            ['formatter' => 'json', 'path' => './tests/fixtures/jsonFormatterResult.json']
+        ];
+
+        $res = [];
+        foreach ($pathsToFileBefore as $key => $pathToFileBefore) {
+            foreach ($formattersWithPathsToResult as $data) {
+                $res[] = [$pathToFileBefore, $pathsToFileAfter[$key], $data];
+            }
         }
-
         return $res;
-    }
 
+    }
 }
+
+
 
 
 
