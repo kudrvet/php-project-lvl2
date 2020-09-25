@@ -15,51 +15,60 @@ use function Differ\Differ\genDiff;
 
 class DifferTest extends TestCase
 {
+
+    public $dataFormats = ['json', 'yaml'];
+    public $formatterNames = ['plain', 'pretty', 'json'];
     /**
      * @dataProvider additionProvider
      */
 
-    public function testGenDiff($pathToFileBefore, $pathToFileAfter,$formatterWithPathToResult)
+    public function testGenDiff($pathsToCompareFiles,$formatterName, $pathToResultFile)
 
     {
-        $formatter = $formatterWithPathToResult['formatter'];
-        $pathToResult = $formatterWithPathToResult['path'];
-
-        $actual = genDiff($pathToFileBefore, $pathToFileAfter,$formatter);
-        $expected = file_get_contents($pathToResult);
+        [$pathToFileBefore, $pathToFileAfter] = $pathsToCompareFiles;
+        $actual = genDiff($pathToFileBefore, $pathToFileAfter,$formatterName);
+        $expected = file_get_contents($pathToResultFile);
 
         $this->assertEquals($expected, $actual);
 
     }
 
     public function additionProvider()
+
     {
-
-        $pathsToFileBefore = [
-            './tests/fixtures/before.json',
-            './tests/fixtures/before.yaml'
-        ];
-
-        $pathsToFileAfter = [
-            './tests/fixtures/after.json',
-            './tests/fixtures/after.yaml',
-        ];
-
-        $formattersWithPathsToResult = [
-            ['formatter'=>'pretty', 'path' =>'./tests/fixtures/prettyFormatterResult'],
-            ['formatter' => 'plain','path' => './tests/fixtures/plainFormatterResult'],
-            ['formatter' => 'json', 'path' => './tests/fixtures/jsonFormatterResult.json']
-        ];
-
         $res = [];
-        foreach ($pathsToFileBefore as $key => $pathToFileBefore) {
-            foreach ($formattersWithPathsToResult as $data) {
-                $res[] = [$pathToFileBefore, $pathsToFileAfter[$key], $data];
+        foreach ($this->dataFormats as $dataFormat){
+            foreach ($this->formatterNames as $formatterName) {
+                $res[] = [$this->getPathToCompareFiles($dataFormat),$formatterName,$this->getPathToResultFile($formatterName)];
             }
         }
         return $res;
-
     }
+
+    function getPathToCompareFiles($dataFormat)
+       {
+           switch ($dataFormat) {
+               case 'json':
+                   return ['./tests/fixtures/before.json','./tests/fixtures/after.json'];
+               case 'yaml':
+                   return ['./tests/fixtures/before.yaml','./tests/fixtures/after.yaml'];
+               default:
+                   throw new \Exception("Format {$dataFormat} is not supported");
+           }
+       }
+   function getPathToResultFile($formatterName)
+   {
+       switch ($formatterName) {
+           case 'pretty':
+               return './tests/fixtures/prettyFormatterResult';
+           case 'plain':
+               return './tests/fixtures/plainFormatterResult';
+           case 'json':
+               return './tests/fixtures/jsonFormatterResult.json';
+           default:
+               throw new \Exception("Formatter {$formatterName} is not supported");
+       }
+   }
 }
 
 
