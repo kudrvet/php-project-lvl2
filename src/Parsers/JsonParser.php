@@ -2,7 +2,7 @@
 
 namespace Differ\Parsers\JsonParser;
 
-function parseJsonToData($json)
+function parseJson($json)
 {
     return json_decode($json, true);
 }

@@ -5,8 +5,8 @@ namespace Differ\Differ;
 use function Differ\Formatters\JsonFormatter\toJsonFormat;
 use function Differ\Formatters\PrettyFormatter\toPrettyFormat;
 use function Differ\Formatters\PlainFormatter\toPlainFormat;
-use function Differ\Parsers\JsonParser\parseJsonToData;
-use function Differ\Parsers\YamlParser\parseYamlToData;
+use function Differ\Parsers\JsonParser\parseJson;
+use function Differ\Parsers\YamlParser\parseYaml;
 
 function genDiff($path1, $path2, $format = 'pretty')
 {
@@ -28,10 +28,10 @@ function getDataFromContent($content, $format)
 {
     switch ($format) {
         case "yaml":
-            $data = parseYamlToData($content);
+            $data = parseYaml($content);
             break;
         case "json":
-            $data = parseJsonToData($content);
+            $data = parseJson($content);
             break;
         default:
             throw new \Exception("Format {$format} is not supported! ");
