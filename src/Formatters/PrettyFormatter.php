@@ -46,14 +46,15 @@ function getFormattedValue($value, $deep)
     if (!is_array($value)) {
         return $value;
     }
-        $tab = str_repeat("    ", $deep + 1);
-        $formatted = array_map(function ($key) use ($value, $deep, $tab) {
-            $formattedValue = is_array($value[$key]) ? getFormattedValue($value[$key], $deep + 1) : $value[$key];
 
-            return "{$tab}    {$key}: {$formattedValue}";
-        }, array_keys($value));
+    $tab = str_repeat("    ", $deep + 1);
+    $formatted = array_map(function ($key) use ($value, $deep, $tab) {
+        $formattedValue = is_array($value[$key]) ? getFormattedValue($value[$key], $deep + 1) : $value[$key];
 
-        $result = implode("\n", $formatted);
+        return "{$tab}    {$key}: {$formattedValue}";
+    }, array_keys($value));
 
-        return "{\n{$result}\n{$tab}}";
+    $result = implode("\n", $formatted);
+
+    return "{\n{$result}\n{$tab}}";
 }
