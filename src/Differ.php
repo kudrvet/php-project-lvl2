@@ -5,8 +5,7 @@ namespace Differ\Differ;
 use function Differ\Formatters\JsonFormatter\toJsonFormat;
 use function Differ\Formatters\PrettyFormatter\toPrettyFormat;
 use function Differ\Formatters\PlainFormatter\toPlainFormat;
-use function Differ\Parsers\JsonParser\parseJson;
-use function Differ\Parsers\YamlParser\parseYaml;
+use function Differ\Parsers\parse;
 
 function genDiff($path1, $path2, $format = 'pretty')
 {
@@ -16,28 +15,12 @@ function genDiff($path1, $path2, $format = 'pretty')
     $fileBeforeFormat = pathinfo($path1, PATHINFO_EXTENSION);
     $fileAfterFormat = pathinfo($path2, PATHINFO_EXTENSION);
 
-    $beforeData = getDataFromContent($contentBefore, $fileBeforeFormat);
-    $afterData = getDataFromContent($contentAfter, $fileAfterFormat);
+    $beforeData = parse($contentBefore, $fileBeforeFormat);
+    $afterData = parse($contentAfter, $fileAfterFormat);
 
     $diffTree = getDiffTree($beforeData, $afterData);
 
     return buildFormattedDiff($diffTree, $format);
-}
-
-function getDataFromContent($content, $format)
-{
-    switch ($format) {
-        case "yaml":
-            $data = parseYaml($content);
-            break;
-        case "json":
-            $data = parseJson($content);
-            break;
-        default:
-            throw new \Exception("Format {$format} is not supported! ");
-    }
-
-    return $data;
 }
 
 function getDiffTree(array $beforeData, array $afterData)

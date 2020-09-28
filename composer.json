@@ -13,8 +13,7 @@
     "autoload": {
     "files": [
       "src/Differ.php",
-      "src/Parsers/JsonParser.php",
-      "src/Parsers/YamlParser.php",
+      "src/Parsers.php",
       "src/Formatters/PlainFormatter.php",
       "src/Formatters/PrettyFormatter.php",
       "src/Formatters/JsonFormatter.php"
