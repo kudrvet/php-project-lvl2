@@ -32,12 +32,16 @@ class DifferTest extends TestCase
 
     public function additionProvider()
     {
-        $res = [];
-        foreach ($this->dataFormats as $dataFormat) {
-            foreach ($this->formatterNames as $formatterName) {
-                $res[] = [$dataFormat, $formatterName];
-            }
+
+        $dataFormatsCollection = collect($this->dataFormats);
+        $formattersCollection = collect($this->formatterNames);
+
+        $formatsWithFormattersPairs = $dataFormatsCollection->flatMap(function($dataFormat) use($formattersCollection) {
+            return $formattersCollection->Map(function ($item) use ($dataFormat) {
+                return [$dataFormat,$item]; });
+            ;
+        });
+
+        return ($formatsWithFormattersPairs->all()) ;
         }
-        return $res;
-    }
 }
