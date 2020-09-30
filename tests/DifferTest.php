@@ -11,37 +11,36 @@ class DifferTest extends TestCase
 
     public $dataFormats = ['json', 'yaml'];
     public $formatterNames = ['plain', 'pretty', 'json'];
+
     /**
      * @dataProvider additionProvider
      */
 
     public function testGenDiff($dataFormat, $formatterName)
     {
-        [$pathToFileBefore,$pathToFileAfter,$pathToResultFile] = $this->getFixturesPaths($dataFormat, $formatterName);
-        $actual = genDiff($pathToFileBefore, $pathToFileAfter, $formatterName);
-        $expected = file_get_contents($pathToResultFile);
+        $nameOfFileBefore = "before.{$dataFormat}";
+        $nameOfFileAfter = "after.{$dataFormat}";
+        $nameOfResultFile = "{$formatterName}FormatterResult";
+
+        $actual = genDiff($this->getFixturePath($nameOfFileBefore), $this->getFixturePath($nameOfFileAfter), $formatterName);
+        $expected = file_get_contents($this->getFixturePath($nameOfResultFile));
+
         $this->assertEquals($expected, $actual);
     }
 
-    public function getFixturesPaths($dataFormat, $formatterName)
+    public function getFixturePath($fileName)
     {
         $pathToFixtureFolder = './tests/fixtures';
-        return ["{$pathToFixtureFolder}/before.{$dataFormat}","{$pathToFixtureFolder}/after.{$dataFormat}",
-                    "{$pathToFixtureFolder}/{$formatterName}FormatterResult"];
+
+        return "{$pathToFixtureFolder}/$fileName";
     }
 
     public function additionProvider()
     {
-
-        $dataFormatsCollection = collect($this->dataFormats);
-        $formattersCollection = collect($this->formatterNames);
-
-        $formatsWithFormattersPairs = $dataFormatsCollection->flatMap(function($dataFormat) use($formattersCollection) {
-            return $formattersCollection->Map(function ($item) use ($dataFormat) {
-                return [$dataFormat,$item]; });
-            ;
-        });
-
-        return ($formatsWithFormattersPairs->all()) ;
-        }
+        return [
+            ['json','pretty'],
+            ['yaml', 'plain'],
+            ['yaml', 'json']
+        ];
+    }
 }
