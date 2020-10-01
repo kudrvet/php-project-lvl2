@@ -10,9 +10,6 @@ use function Differ\Differ\genDiff;
 
 class DifferTest extends TestCase
 {
-
-
-
     public $formatsAndFormattersPairs = [
         ['json','pretty'],
         ['yaml', 'plain'],
