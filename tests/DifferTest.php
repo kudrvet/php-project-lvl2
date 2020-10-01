@@ -6,11 +6,19 @@ use PHPUnit\Framework\TestCase;
 
 use function Differ\Differ\genDiff;
 
+
+
 class DifferTest extends TestCase
 {
 
-    public $dataFormats = ['json', 'yaml'];
-    public $formatterNames = ['plain', 'pretty', 'json'];
+
+
+    public $formatsAndFormattersPairs = [
+        ['json','pretty'],
+        ['yaml', 'plain'],
+        ['yaml', 'json']
+    ];
+
 
     /**
      * @dataProvider additionProvider
@@ -30,17 +38,13 @@ class DifferTest extends TestCase
 
     public function getFixturePath($fileName)
     {
-        $pathToFixtureFolder = './tests/fixtures';
+        $pathToFixtureFolder = realpath(__DIR__ .DIRECTORY_SEPARATOR.'fixtures');
 
         return "{$pathToFixtureFolder}/$fileName";
     }
 
     public function additionProvider()
     {
-        return [
-            ['json','pretty'],
-            ['yaml', 'plain'],
-            ['yaml', 'json']
-        ];
+        return $this->formatsAndFormattersPairs;
     }
 }
