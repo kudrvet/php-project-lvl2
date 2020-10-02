@@ -35,9 +35,7 @@ class DifferTest extends TestCase
 
     public function getFixturePath($fileName)
     {
-        $pathToFixtureFolder = realpath(__DIR__ .DIRECTORY_SEPARATOR.'fixtures');
-
-        return "{$pathToFixtureFolder}/$fileName";
+        return realpath(implode(DIRECTORY_SEPARATOR,[__DIR__,'fixtures',$fileName]));
     }
 
     public function additionProvider()
