@@ -28,5 +28,5 @@ jobs:
           coverageLocations: ${{github.workplace}}/build/logs/clover.xml:clover
           debug: true
       - name: check clover.xml
-        run: cat ${{github.workplace}}/logs/coverage/clover.xml
+        run: cat ${{github.workplace}}/build/logs/clover.xml
 
