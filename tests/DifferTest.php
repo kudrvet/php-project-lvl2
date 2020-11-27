@@ -23,14 +23,14 @@ class DifferTest extends TestCase
 
     public function testGenDiff($dataFormat, $formatterName)
     {
-//         $nameOfFileBefore = "before.{$dataFormat}";
-//         $nameOfFileAfter = "after.{$dataFormat}";
-//         $nameOfResultFile = "{$formatterName}FormatterResult";
+        $nameOfFileBefore = "before.{$dataFormat}";
+        $nameOfFileAfter = "after.{$dataFormat}";
+        $nameOfResultFile = "{$formatterName}FormatterResult";
 
-//         $actual = genDiff($this->getFixturePath($nameOfFileBefore), $this->getFixturePath($nameOfFileAfter), $formatterName);
-//         $expected = file_get_contents($this->getFixturePath($nameOfResultFile));
+        $actual = genDiff($this->getFixturePath($nameOfFileBefore), $this->getFixturePath($nameOfFileAfter), $formatterName);
+        $expected = file_get_contents($this->getFixturePath($nameOfResultFile));
 
-//         $this->assertEquals($expected, $actual);
+        $this->assertEquals($expected, $actual);
     }
 
     public function getFixturePath($fileName)
